@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mauli's Love Diary ❤️</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Playfair+Display:ital,wght@0,600;1,500&display=swap" rel="stylesheet">
+<style>
+:root{--bur:#800020;--rose:#C08081;--cream:#FFF8ED;--brown:#795548;--blush:#F3DDE0;--hand:'Caveat',cursive;--serif:'Playfair Display',Georgia,serif}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{display:flex;flex-direction:column;align-items:center;background:radial-gradient(ellipse at 50% 30%,#5b3a30,#2c1914 75%);color:var(--cream);font-family:var(--serif);overflow:hidden;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--blush);outline-offset:2px}
+#stage{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0;position:relative}
+#shift{transition:transform .9s ease}
+#shift.closed{transform:translateX(calc(var(--cs,25) * -1%))}
+#book{filter:drop-shadow(0 18px 24px rgba(0,0,0,.55))}
+.page{background:#f5f2ea;overflow:hidden}
+.page img{width:100%;height:100%;display:block;object-fit:contain;user-select:none;-webkit-user-drag:none;pointer-events:none}
+.page .miss{padding:20px;color:var(--brown);font:600 14px var(--serif);text-align:center}
+#closed{text-align:center;padding:6px 14px 18px}
+#closed h1{font:700 clamp(1.5rem,6vw,2.3rem) var(--hand);margin:0 0 10px;color:var(--blush)}
+.btn{background:var(--bur);color:var(--cream);border:2px solid var(--rose);border-radius:999px;padding:12px 26px;font:700 1.35rem var(--hand);min-height:46px;box-shadow:0 3px 0 #4d0013}
+.btn:active{transform:translateY(2px);box-shadow:none}
+.btn.alt{background:var(--brown);border-color:var(--blush)}
+#nav{display:flex;align-items:center;gap:10px;padding:8px 10px 14px;width:min(560px,100%)}
+#nav .btn{padding:8px 16px;font-size:1.2rem;white-space:nowrap}
+#nav .mid{flex:1;text-align:center;font:700 1.1rem var(--hand);color:var(--blush)}
+#bar{height:4px;background:#ffffff22;border-radius:4px;margin-top:4px;overflow:hidden}#bar i{display:block;height:100%;width:0;background:var(--rose);transition:width .6s}
+[hidden]{display:none!important}
+#fh{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:3}
+.fh{position:absolute;bottom:-40px;animation:rise 9s linear forwards;opacity:.8}
+@keyframes rise{to{transform:translateY(-110vh) rotate(25deg);opacity:0}}
+/* music */
+#mbtn{position:fixed;top:calc(8px + env(safe-area-inset-top));right:8px;z-index:20;width:46px;height:46px;border-radius:50%;background:var(--cream);color:var(--bur);border:2px solid var(--bur);font-size:22px}
+#mp{position:fixed;top:calc(60px + env(safe-area-inset-top));right:8px;z-index:20;width:min(290px,94vw);background:var(--cream);color:var(--brown);border:2px dashed var(--bur);border-radius:10px;padding:12px;box-shadow:0 8px 20px #0007;font-family:var(--hand);font-size:1.15rem}
+#mp b{font:600 1.05rem var(--serif);color:var(--bur);display:block}
+#mp .row{display:flex;align-items:center;gap:6px;margin:6px 0}
+#mp button{background:none;border:1px solid var(--rose);color:var(--bur);border-radius:8px;min-width:38px;min-height:38px;font-size:17px}
+#mp button.on{background:var(--bur);color:var(--cream)}
+#mp input[type=range]{flex:1;accent-color:var(--bur)}
+#pl{max-height:120px;overflow:auto;margin:4px 0 0;padding:0;list-style:none}
+#pl button{border:0;text-align:left;width:100%;min-height:34px;font:inherit}#pl button.cur{background:var(--blush);font-weight:700}
+#mst{font-size:.95rem;color:var(--bur);min-height:1.1em}
+/* modal */
+#modal{position:fixed;inset:0;z-index:30;background:#1d0d0acc;display:flex;align-items:center;justify-content:center;padding:10px}
+#mbox{position:relative;width:min(540px,100%);max-height:94dvh;overflow:auto;background:var(--cream) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Ccircle cx='1' cy='1' r='.6' fill='%23795548' opacity='.12'/%3E%3C/svg%3E");color:var(--brown);border:3px double var(--bur);border-radius:6px;padding:18px 16px 20px;text-align:center;box-shadow:0 0 0 6px var(--blush),0 16px 40px #000a}
+#mbox h2{font:600 1.5rem var(--serif);color:var(--bur);margin:6px 0 8px}
+#mbox h3{font:600 1.25rem var(--serif);margin:8px 0 12px}
+#mbox p{font:700 1.25rem/1.3 var(--hand);margin:8px 0}
+.meta{opacity:.8}
+.skip{position:absolute;top:6px;right:8px;background:none;border:0;color:var(--bur);font:700 1.1rem var(--hand);min-height:40px}
+.opts{display:grid;gap:9px}
+.opt{background:var(--blush);color:var(--brown);border:2px solid var(--rose);border-radius:10px;padding:11px 12px;font:700 1.25rem var(--hand);min-height:48px}
+.opt.ok{background:#e8c7cb;border-color:var(--bur);color:var(--bur)}.opt.no{opacity:.45}
+.arena{position:relative;height:min(56dvh,420px);margin:8px 0;border:2px dashed var(--rose);border-radius:10px;overflow:hidden;touch-action:manipulation;background:#fff6ee}
+.fall{position:absolute;top:-60px;font-size:46px;line-height:1;padding:8px;cursor:pointer;user-select:none;touch-action:manipulation;transition:transform 6.5s linear}
+.pop{animation:pop .5s ease}@keyframes pop{from{transform:scale(.6);opacity:0}}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}
+.card{aspect-ratio:3/4;perspective:600px;border:0;background:none;padding:0}
+.card .in{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .45s}
+.card{position:relative}.card.f .in{transform:rotateY(180deg)}
+.card .fa,.card .ba{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid var(--bur)}
+.card .fa{background:var(--bur);color:var(--blush);font-size:1.8rem}
+.card .ba{background:#fff;transform:rotateY(180deg);font-size:2rem}.card .ba img{width:100%;height:100%;object-fit:cover}
+.card.m .ba{background:var(--blush)}
+.yn{position:relative;height:130px}.yn .btn{position:absolute;top:40px}
+#env{position:relative;width:240px;height:150px;margin:14px auto;background:#d9b38c;border:2px solid var(--brown);border-radius:4px}
+#env .fl{position:absolute;left:0;top:0;width:100%;height:80px;background:#c89b72;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform .7s}
+#env.open .fl{transform:rotateX(180deg)}
+#env .sl{position:absolute;left:50%;top:58px;width:44px;height:44px;margin-left:-22px;border-radius:50%;background:var(--bur);color:var(--blush);display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 2px 4px #0006;transition:.6s}
+#env.open .sl{transform:scale(1.8) rotate(40deg);opacity:0}
+.shake{animation:sh .4s}@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.letter{background:#fffaf0;border:1px solid var(--rose);padding:14px;margin-top:8px;font:700 1.45rem/1.4 var(--hand);min-height:70px;white-space:pre-wrap;box-shadow:0 3px 8px #0003;transform:rotate(-1deg)}
+.sig{font:700 1.5rem var(--hand);color:var(--bur)}
+.rh{position:absolute;font-size:50px;line-height:1;padding:8px;transition:left .45s,top .45s;cursor:pointer;touch-action:manipulation}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div id="fh" aria-hidden="true"></div>
+<button id="mbtn" aria-label="Open music player" aria-expanded="false">🎵</button>
+<div id="mp" hidden>
+  <b id="mt">No songs yet</b><span id="ma"></span>
+  <div class="row"><button id="mprev" aria-label="Previous song">⏮</button><button id="mplay" aria-label="Play or pause">▶</button><button id="mnext" aria-label="Next song">⏭</button><button id="mshuf" aria-label="Shuffle" title="Shuffle">🔀</button><button id="mrep" aria-label="Repeat song" title="Repeat">🔁</button></div>
+  <div class="row"><span id="mcur">0:00</span><input id="mseek" type="range" min="0" max="100" value="0" aria-label="Playback position"><span id="mdur">0:00</span></div>
+  <div class="row"><button id="mmute" aria-label="Mute or unmute">🔊</button><input id="mvol" type="range" min="0" max="1" step=".05" value=".7" aria-label="Volume"></div>
+  <div id="mst"></div><ul id="pl"></ul>
+</div>
+
+<div id="stage"><div id="shift" class="closed"><div id="book"></div></div></div>
+<div id="closed"><h1 id="greet"></h1><button class="btn" id="openBtn">Open your diary</button></div>
+<div id="nav" hidden><button class="btn alt" id="prevBtn" aria-label="Previous pages">‹ Back</button><div class="mid"><span id="lbl"></span><div id="bar"><i></i></div></div><button class="btn" id="nextBtn" aria-label="Next pages">Next ›</button></div>
+<div id="modal" hidden role="dialog" aria-modal="true"><div id="mbox"></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
+<script>
+/* =====================================================================
+   1. EDIT HERE — ALL CONTENT & SETTINGS
+   ===================================================================== */
+const CONFIG = {
+  coverGreeting: "A little something for you, Mauli ❤️",
+  /* Closed cover sits on the right half of the book area. If your cover looks
+     off-centre, change this number (percent of book width): 25 = shift left, 0 = none. */
+  coverShiftPercent: 25,
+  pauseMusicWhenDiaryCloses: true,           // MUSIC: pause when the diary closes
+
+  /* GAME PLACEMENT: games shown when she taps "Next" on spread 1..4.
+     Spread 1 = pages 2-3, 2 = pages 4-5, 3 = pages 6-7, 4 = pages 8-9 (shown before the final message).
+     Game ids: quiz, catch, memory, letter, runaway */
+  gamePlacement: { 1:["quiz"], 2:["catch"], 3:["memory","letter"], 4:["runaway"] },
+  /* COMPULSORY (true) or OPTIONAL (false) — optional games get a "Skip" button */
+  compulsory: { quiz:true, catch:false, memory:false, letter:true, runaway:false },
+  /* Games preceded by the playful YES / NO question */
+  askBefore: ["catch","runaway"],
+  yesNoQuestion: "Are you sure you want to continue? 👀",
+  noMessages: ["Nice try 😂","Mauli, you can't escape!","Just one more page 🥺","You know you want to see it!"],
+
+  /* QUIZ — a = index of correct option (0 = A, 1 = B, 2 = C, 3 = D) */
+  quiz: [
+    { q:"Who gets angry first?", o:["Me 😂","Mauli 🙄","Both of us 💀","Neither, we're innocent 😇"], a:1 },
+    { q:"Who falls asleep during calls?", o:["Me 😴","Mauli 💤","Both of us","Nobody, we talk all night ❤️"], a:0 },
+    { q:"Who is more stubborn?", o:["Me","Mauli","Both equally stubborn 😂"], a:2 },
+    { q:"Who says sorry first after a fight?", o:["Me 🥺","Mauli ❤️","Whoever misses the other first."], a:2 },
+    { q:"Which moment would we love to relive?", o:["Our first conversation.","Our sweetest moment together.","Our funniest memory.","Every moment we've spent together."], a:3 }
+  ],
+  quizCorrect: ["Yesss! You know us so well 🥰","Correct, baby! ❤️","Look at you go! 💃"],
+  quizWrong: ["Hehe, nope 😂","Oops! Bold guess 🙈","Not quite… but cute try 🥺"],
+
+  /* CATCH MY LOVE — 15 compliments in order (EDIT TEXT HERE) */
+  fallSeconds: 6.5,      // DIFFICULTY: higher = slower hearts = easier
+  compliments: [
+    "You're my favourite notification. ❤️","Your smile is my biggest weakness.","You're prettier than every sunset. 🌅",
+    "I could listen to you talk forever.","You're my favourite person to annoy. 😂","Your happiness means everything to me.",
+    "I love all your little silly habits.","You're my favourite part of every day.","You make ordinary moments special.",
+    "I wish I could hug you right now. 🥺","You're my favourite distraction.","Nobody could ever replace your place in my heart.",
+    "You make my world brighter.","I would choose you all over again.","You're my Mauli, my favourite human. ❤️"
+  ],
+  bonusCompliment: "You're my baby chick 🐣",
+  catchReward: "You caught 15 hearts, but somehow you still have mine. ❤️",
+
+  /* MEMORY MATCH — photos go in images/ ; caption for the photo pairs is editable */
+  photos: [
+    { src:"images/memory-1.jpg", caption:"[EDIT: caption for memory photo 1]" },
+    { src:"images/memory-2.jpg", caption:"[EDIT: caption for memory photo 2]" }
+  ],
+  /* Pair order: photo 0, heart, rose, letter, photo 1, teddy, butterfly, smile */
+  memoryPairs: [
+    { photo:0 },
+    { sym:"❤️", msg:"Two hearts, one beautiful story." },
+    { sym:"🌹", msg:"A little flower for my favourite girl." },
+    { sym:"💌", msg:"Every love story deserves a letter." },
+    { photo:1 },
+    { sym:"🧸", msg:"A little cuddly reminder of my love." },
+    { sym:"🦋", msg:"You make my world feel magical." },
+    { sym:"🥰", msg:"My favourite smile belongs to you." }
+  ],
+  memoryDone: "Every little memory with you is my favourite memory. ❤️",
+
+  /* SECRET LETTER — correct = index of right option (3 = D, My sleep) */
+  letterQuestion: "What is the one thing I would never want to lose?",
+  letterOptions: ["My phone 😂","My favourite food 🍕","You ❤️","My sleep 😴"],
+  letterCorrect: 3,
+  letterWrong: "Hmm… that's not the key 😂 Try again!",
+  letterIntro: "Congratulations, my girl! You found the key. But the sweetest part isn't the letter... it's the person reading it. ❤️",
+  secretLetter: "[I LOVE YOU]",          // EDIT: put your personal letter here
+
+  /* RUNAWAY HEART */
+  runCatches: 5,
+  runMessages: ["Hehe, missed me! 😂","Catch me if you can!","Almost there, baby!","Okay okay, one more try! 🥺"],
+  runFinal: "Sure... i knew it baby you would never lose",
+  runSignature: "— Shivam ❤️",
+
+  /* FINAL PAGE */
+  oneLastThing: "One last thing...",
+  finalMessage: "Some stories are written in books. Ours is something I want to keep writing, one page at a time. ❤️",
+  madeWith: "Made with love by Shivam ❤️"
+};
+
+/* MUSIC — add files to audio/ and add/edit entries here */
+const musicPlaylist = [
+  { title:"Our First Song",     artist:"Our Little Playlist", src:"audio/romantic-music.mp3" },
+  { title:"A Song for Mauli",   artist:"Our Little Playlist", src:"audio/song-2.mp3" },
+  { title:"Forever in My Heart",artist:"Our Little Playlist", src:"audio/song-3.mp3" }
+];
+
+/* =====================================================================
+   2. HELPERS & STATE
+   ===================================================================== */
+const $ = s => document.querySelector(s);
+const rnd = (a,b) => Math.random()*(b-a)+a;
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const S = { spread:0, done:{}, skipped:{}, busy:false };
+let cleanups = [];
+const later = (f,ms) => { const t=setTimeout(f,ms); cleanups.push(()=>clearTimeout(t)); return t; };
+const every = (f,ms) => { const t=setInterval(f,ms); cleanups.push(()=>clearInterval(t)); return t; };
+const mk = (tag,cls,html) => { const e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e; };
+const imgFallback = (img,fb) => { img.onerror = () => { const s=mk("span","",fb); img.replaceWith(s); }; };
+
+function closeModal(){ cleanups.forEach(f=>f()); cleanups=[]; $("#modal").hidden=true; }
+function openModal(build, skipFn){
+  closeModal();
+  const b=$("#mbox"); b.innerHTML="";
+  if(skipFn){ const s=mk("button","skip","Skip ›"); s.onclick=skipFn; b.appendChild(s); }
+  const c=mk("div"); b.appendChild(c); $("#modal").hidden=false; build(c); b.scrollTop=0;
+}
+function cont(box,fin,label){ const b=mk("button","btn",label||"Continue ❤️"); b.style.marginTop="12px"; b.onclick=fin; box.appendChild(b); }
+
+/* =====================================================================
+   3. NOTEBOOK (StPageFlip) — original images used untouched, in order
+   ===================================================================== */
+const book = $("#book");
+for(let i=1;i<=9;i++){
+  const p=mk("div","page"); if(i===1) p.dataset.density="hard";
+  const im=new Image(); im.src="images/page-"+i+".png"; im.alt="Diary page "+i; im.draggable=false;
+  im.onerror=()=>{ im.replaceWith(mk("div","miss","Missing file: images/page-"+i+".png")); };
+  p.appendChild(im); book.appendChild(p);
+}
+$("#shift").style.setProperty("--cs", CONFIG.coverShiftPercent);
+$("#greet").textContent = CONFIG.coverGreeting;
+let pf=null;
+function fit(){
+  const w=Math.max(260,Math.min(innerWidth*.97,(innerHeight-170)*1172/664,1172));
+  book.style.width=w+"px"; book.style.height=(w*664/1172)+"px";
+  if(pf){ try{ pf.update(); }catch(e){} }
+}
+fit();
+try{
+  pf = new St.PageFlip(book,{ width:586, height:664, size:"stretch", minWidth:130, maxWidth:586, minHeight:150, maxHeight:664,
+    showCover:true, usePortrait:false, useMouseEvents:false, drawShadow:true, maxShadowOpacity:.55,
+    flippingTime:reduce?1:900, mobileScrollSupport:false, autoSize:true });
+  pf.loadFromHTML(document.querySelectorAll(".page"));
+  pf.on("flip", e => { S.busy=false; onSpread(Math.ceil(e.data/2)); });
+}catch(err){ console.error("Page-flip library failed to load (check internet).", err); $("#greet").textContent="The page-flip library could not load. Please check your internet connection."; }
+addEventListener("resize", fit);
+
+const LABELS=["Front cover","Pages 2–3","Pages 4–5","Pages 6–7","Pages 8–9"];
+function onSpread(s){
+  S.spread=s;
+  $("#shift").classList.toggle("closed", s===0);
+  $("#closed").hidden = s!==0; $("#nav").hidden = s===0;
+  $("#lbl").textContent = LABELS[s]+"  ("+(s+1)+"/5)";
+  $("#bar i").style.width = (s/4*100)+"%";
+  $("#nextBtn").textContent = s===4 ? CONFIG.oneLastThing : "Next ›";
+  if(s===0 && CONFIG.pauseMusicWhenDiaryCloses) A.pause();
+}
+function flip(dir){
+  if(!pf||S.busy) return; S.busy=true; setTimeout(()=>S.busy=false,1400);
+  dir>0 ? pf.flipNext("top") : pf.flipPrev("top");
+}
+function goNext(){
+  if(!$("#modal").hidden||S.busy) return;
+  const s=S.spread, q=(CONFIG.gamePlacement[s]||[]);
+  if(s===0){ flip(1); heartsBurst(); return; }
+  if(s===4){ runQueue(q, finale); return; }
+  runQueue(q, ()=>flip(1));
+}
+function goPrev(){ if(!$("#modal").hidden||S.spread===0) return; flip(-1); }
+$("#openBtn").onclick=()=>{ flip(1); heartsBurst(); };
+$("#nextBtn").onclick=goNext; $("#prevBtn").onclick=goPrev;
+addEventListener("keydown",e=>{
+  if(!$("#modal").hidden||/INPUT|BUTTON/.test(document.activeElement.tagName)&&e.key===" ") return;
+  if(e.key==="ArrowRight") S.spread===0?flip(1):goNext();
+  if(e.key==="ArrowLeft") goPrev();
+});
+/* swipe (only on the book itself, so game/music controls never flip pages) */
+let sx=0,sy=0;
+$("#stage").addEventListener("pointerdown",e=>{ sx=e.clientX; sy=e.clientY; });
+$("#stage").addEventListener("pointerup",e=>{
+  const dx=e.clientX-sx, dy=e.clientY-sy;
+  if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.5) dx<0 ? (S.spread===0?flip(1):goNext()) : goPrev();
+});
+
+/* =====================================================================
+   4. GAME FLOW
+   ===================================================================== */
+function runQueue(ids,cb){
+  const p=ids.filter(i=>!S.done[i]&&!S.skipped[i]);
+  if(!p.length) return cb();
+  runGame(p[0], ()=>runQueue(p.slice(1),cb));
+}
+function runGame(id,cb){
+  const fin=()=>{ S.done[id]=1; closeModal(); cb(); };
+  const skip=()=>{ S.skipped[id]=1; closeModal(); cb(); };
+  const start=()=>openModal(box=>GAMES[id](box,fin), CONFIG.compulsory[id]?null:skip);
+  CONFIG.askBefore.includes(id) ? yesno(start) : start();
+}
+function yesno(go){
+  openModal(box=>{
+    box.innerHTML='<h2>'+CONFIG.yesNoQuestion+'</h2><div class="yn"><button class="btn" id="yy" style="left:12%">YES ❤️</button><button class="btn alt" id="nn" style="right:12%">NO 🙄</button></div><p id="nm"></p>';
+    let n=0; const no=box.querySelector("#nn");
+    const dodge=ev=>{
+      ev.preventDefault();
+      if(n>=6){ go(); return; }              // never trap: after 6 tries NO gives in
+      n++; no.style.transform="translate("+rnd(-150,40)+"px,"+rnd(-30,50)+"px)";
+      box.querySelector("#nm").textContent=CONFIG.noMessages[n%CONFIG.noMessages.length];
+      if(n>=6) no.textContent="Okay, fine 🥺";
+    };
+    no.addEventListener("pointerenter",e=>{ if(e.pointerType==="mouse") dodge(e); });
+    no.addEventListener("pointerdown",dodge);
+    no.addEventListener("click",e=>e.preventDefault());
+    box.querySelector("#yy").onclick=go;
+  });
+}
+
+const GAMES = {
+/* ---------- Game 1: quiz ---------- */
+quiz(box,fin){
+  let i=0,sc=0; const Q=CONFIG.quiz;
+  const show=()=>{
+    if(i>=Q.length) return end();
+    const q=Q[i]; let locked=false;
+    box.innerHTML='<h2>How well do you know us? ❤️</h2><p class="meta">Question '+(i+1)+' of '+Q.length+' · Score '+sc+'</p><h3>'+q.q+'</h3><div class="opts"></div><p id="fb"></p>';
+    const o=box.querySelector(".opts");
+    q.o.forEach((t,k)=>{
+      const b=mk("button","opt",t);
+      b.onclick=()=>{
+        if(locked) return; locked=true;
+        const ok=k===q.a; if(ok) sc++;
+        [...o.children].forEach((c,j)=>{ if(j===q.a) c.classList.add("ok"); else c.classList.add("no"); });
+        box.querySelector("#fb").textContent=(ok?pick(CONFIG.quizCorrect):pick(CONFIG.quizWrong));
+        if(ok) heartsBurst(6);
+        const n=mk("button","btn",i<Q.length-1?"Next question":"See result"); n.style.marginTop="8px";
+        n.onclick=()=>{ i++; show(); }; box.appendChild(n); n.focus();
+      };
+      o.appendChild(b);
+    });
+  };
+  const end=()=>{
+    const msg=sc===Q.length?"Perfect! You know us by heart. ❤️":sc>=3?"So close to perfect! 🥰":"Hehe… we'll call it a cute effort 😂";
+    box.innerHTML='<h2>Your result</h2><p style="font-size:2.2rem">'+sc+' / '+Q.length+'</p><p>'+msg+'</p>';
+    const r=mk("button","btn alt","Play again"); r.onclick=()=>{ i=0; sc=0; show(); };
+    box.appendChild(r); cont(box,fin);
+  };
+  show();
+},
+/* ---------- Game 2: catch my love ---------- */
+catch(box,fin){
+  const N=CONFIG.compliments.length; let caught=0,active=0,finished=false;
+  box.innerHTML='<h2>Catch my love ❤️</h2><p class="meta">Tap the hearts! <span id="cc">0</span> / '+N+'</p><div class="arena" id="ar"></div><p id="cm" style="min-height:3em">Catch all '+N+' hearts…</p>';
+  const ar=box.querySelector("#ar"), cm=box.querySelector("#cm");
+  const spawn=()=>{
+    if(finished||caught>=N||active>=3) return;
+    active++;
+    const h=mk("div","fall","❤️"); h.style.left=rnd(4,82)+"%"; ar.appendChild(h);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{ h.style.transitionDuration=CONFIG.fallSeconds+"s"; h.style.transform="translateY("+(ar.clientHeight+90)+"px) rotate("+rnd(-25,25)+"deg)"; }));
+    let gone=false; const rm=()=>{ if(!gone){ gone=true; active--; h.remove(); } };
+    h.addEventListener("transitionend",rm);
+    h.addEventListener("pointerdown",e=>{
+      e.preventDefault(); if(gone||finished) return; rm(); caught++;
+      box.querySelector("#cc").textContent=caught;
+      cm.className="pop"; cm.textContent=CONFIG.compliments[caught-1]; cm.style.animation="none"; void cm.offsetWidth; cm.style.animation="";
+      heartsBurst(3);
+      if(caught>=N) win();
+    });
+  };
+  const win=()=>{
+    finished=true;
+    later(()=>{ cm.innerHTML='<span class="pop">'+CONFIG.bonusCompliment+'</span>'; heartsBurst(14); },1800);
+    later(()=>{ cm.innerHTML+='<br>'+CONFIG.catchReward; cont(box,fin); },3800);
+  };
+  spawn(); every(spawn,950);
+},
+/* ---------- Game 3: memory match ---------- */
+memory(box,fin){
+  const P=CONFIG.memoryPairs; let cards=[];
+  P.forEach((p,i)=>{ cards.push({pair:i},{pair:i}); });
+  const build=()=>{
+    cards.sort(()=>Math.random()-.5);
+    let first=null,lock=false,moves=0,matched=0;
+    box.innerHTML='<h2>Our memory match 📸</h2><p class="meta">Moves: <span id="mv">0</span> · Pairs: <span id="pr">0</span>/'+P.length+'</p><div class="grid"></div><p id="mm" style="min-height:3em">Find the matching pairs…</p>';
+    const g=box.querySelector(".grid"), mm=box.querySelector("#mm");
+    cards.forEach(c=>{
+      const b=mk("button","card",'<div class="in"><div class="fa">❤</div><div class="ba"></div></div>');
+      b.setAttribute("aria-label","Memory card, face down");
+      const p=P[c.pair], back=b.querySelector(".ba");
+      if(p.photo!=null){ const im=new Image(); im.src=CONFIG.photos[p.photo].src; im.alt="Our photo"; imgFallback(im,"📸"); back.appendChild(im); }
+      else back.textContent=p.sym;
+      b.onclick=()=>{
+        if(lock||b.classList.contains("f")) return;
+        b.classList.add("f");
+        if(!first){ first=b; return; }
+        lock=true; moves++; box.querySelector("#mv").textContent=moves;
+        const a=first; first=null;
+        if(a.dataset.p===String(c.pair)||false){}
+        if(+a.dataset.pair===c.pair){
+          a.classList.add("m"); b.classList.add("m"); matched++; box.querySelector("#pr").textContent=matched;
+          mm.textContent = p.photo!=null ? CONFIG.photos[p.photo].caption : p.msg; mm.className="pop";
+          lock=false;
+          if(matched===P.length) later(()=>{ mm.innerHTML=CONFIG.memoryDone+'<br><span class="sig">— Shivam</span>'; heartsBurst(14);
+            const r=mk("button","btn alt","Play again"); r.onclick=build; box.appendChild(r); cont(box,fin); },900);
+        } else later(()=>{ a.classList.remove("f"); b.classList.remove("f"); lock=false; },850);
+      };
+      b.dataset.pair=c.pair; g.appendChild(b);
+    });
+  };
+  build();
+},
+/* ---------- Game 4: secret letter ---------- */
+letter(box,fin){
+  const draw=()=>{
+    box.innerHTML='<h2>Unlock my secret letter 💌</h2><div id="env"><div class="fl"></div><div class="sl">❤</div></div><h3>'+CONFIG.letterQuestion+'</h3><div class="opts"></div><p id="lm"></p><div id="lw"></div>';
+    const o=box.querySelector(".opts"), env=box.querySelector("#env");
+    CONFIG.letterOptions.forEach((t,k)=>{
+      const b=mk("button","opt",t);
+      b.onclick=()=>{
+        if(k!==CONFIG.letterCorrect){ env.classList.remove("shake"); void env.offsetWidth; env.classList.add("shake"); box.querySelector("#lm").textContent=CONFIG.letterWrong; return; }
+        o.hidden=true; box.querySelector("h3").hidden=true; env.classList.add("open"); heartsBurst(10);
+        later(()=>{
+          box.querySelector("#lm").textContent=CONFIG.letterIntro;
+          const L=mk("div","letter"); box.querySelector("#lw").appendChild(L);
+          let n=0; const t=every(()=>{ L.textContent=CONFIG.secretLetter.slice(0,++n); if(n>=CONFIG.secretLetter.length){ clearInterval(t); 
+            const r=mk("button","btn alt","Replay envelope"); r.onclick=draw; box.querySelector("#lw").append(r); cont(box.querySelector("#lw"),fin); } },reduce?1:45);
+        },900);
+      };
+      o.appendChild(b);
+    });
+  };
+  draw();
+},
+/* ---------- Game 5: runaway heart ---------- */
+runaway(box,fin){
+  const N=CONFIG.runCatches; let n=0,mi=0,done=false,lastDodge=0;
+  box.innerHTML='<h2>Catch the runaway heart 💗</h2><p class="meta">Caught: <span id="rc">0</span> / '+N+'</p><div class="arena" id="ar"><div class="rh" id="rh">💗</div></div><p id="rm" style="min-height:2.6em">Can you catch me?</p>';
+  const ar=box.querySelector("#ar"), h=box.querySelector("#rh"), rm=box.querySelector("#rm");
+  const say=()=>{ rm.textContent=CONFIG.runMessages[mi++%CONFIG.runMessages.length]; };
+  const move=()=>{ h.style.left=rnd(4,Math.max(10,ar.clientWidth-70))+"px"; h.style.top=rnd(4,Math.max(10,ar.clientHeight-70))+"px"; };
+  move(); const tm=every(()=>{ if(!done) move(); },1500);   // DIFFICULTY: lower ms = harder
+  ar.addEventListener("pointermove",e=>{
+    if(done||e.pointerType!=="mouse"||Date.now()-lastDodge<900) return;
+    const r=h.getBoundingClientRect(), d=Math.hypot(e.clientX-(r.left+r.width/2),e.clientY-(r.top+r.height/2));
+    if(d<60&&Math.random()<.5){ lastDodge=Date.now(); move(); say(); }   // only dodges sometimes → always catchable
+  });
+  ar.addEventListener("pointerdown",e=>{ if(!done&&e.target!==h){ say(); } });
+  h.addEventListener("pointerdown",e=>{
+    e.preventDefault(); e.stopPropagation(); if(done) return;
+    n++; box.querySelector("#rc").textContent=n; say(); heartsBurst(3); move();
+    if(n>=N){
+      done=true; clearInterval(tm); h.hidden=true;
+      rm.innerHTML="";
+      const ev=mk("button","btn","💌 Open the envelope"); ev.onclick=()=>{ ar.hidden=true; rm.innerHTML='<span class="pop" style="font-size:1.6rem">'+CONFIG.runFinal+'</span><br><span class="sig">'+CONFIG.runSignature+'</span>'; heartsBurst(16); ev.remove(); cont(box,fin); };
+      box.appendChild(ev); ev.focus();
+    }
+  });
+}
+};
+
+/* =====================================================================
+   5. FINALE
+   ===================================================================== */
+function finale(){
+  openModal(box=>{
+    box.innerHTML='<h2>'+CONFIG.oneLastThing+'</h2><p id="fm" style="font-size:1.55rem"></p><p class="sig" id="fs" hidden>'+CONFIG.madeWith+'</p>';
+    const t=CONFIG.finalMessage; let n=0; const el=box.querySelector("#fm");
+    heartsBurst(16);
+    const tm=every(()=>{ el.textContent=t.slice(0,++n); if(n>=t.length){ clearInterval(tm);
+      box.querySelector("#fs").hidden=false; heartsBurst(18);
+      const b=mk("button","btn","Close the diary"); b.style.marginTop="12px";
+      b.onclick=()=>{ closeModal(); pf.flip(0,"top"); }; box.appendChild(b); b.focus(); } }, reduce?1:35);
+  });
+}
+
+/* =====================================================================
+   6. FLOATING HEARTS & PETALS
+   ===================================================================== */
+function heartsBurst(n=8){
+  if(reduce) return;
+  for(let i=0;i<n;i++) setTimeout(()=>floatOne(),i*90);
+}
+function floatOne(){
+  const e=mk("span","fh",pick(["❤️","💗","🌸","💕","❤️"]));
+  e.style.left=rnd(2,96)+"%"; e.style.fontSize=rnd(16,32)+"px"; e.style.animationDuration=rnd(6,10)+"s";
+  $("#fh").appendChild(e); e.addEventListener("animationend",()=>e.remove());
+}
+setInterval(()=>{ if(!reduce&&!document.hidden&&S.spread>0&&$("#fh").children.length<10) floatOne(); },1400);
+
+/* =====================================================================
+   7. MUSIC PLAYER (never autoplays; works with no files)
+   ===================================================================== */
+const A=new Audio(); A.preload="none"; A.volume=.7;
+let mi=0, shuf=false;
+const fmt=t=>isFinite(t)?Math.floor(t/60)+":"+String(Math.floor(t%60)).padStart(2,"0"):"0:00";
+function mLoad(i,play){
+  if(!musicPlaylist.length){ $("#mt").textContent="No songs yet"; $("#mst").textContent="Add files to audio/ and list them in musicPlaylist."; return; }
+  mi=(i+musicPlaylist.length)%musicPlaylist.length; const s=musicPlaylist[mi];
+  A.src=s.src; $("#mt").textContent=s.title; $("#ma").textContent=s.artist; $("#mst").textContent="";
+  [...$("#pl").querySelectorAll("button")].forEach((b,k)=>b.classList.toggle("cur",k===mi));
+  if(play) A.play().catch(()=>{});
+}
+function mNext(dir){ if(!musicPlaylist.length) return; mLoad(shuf&&dir>0?Math.floor(Math.random()*musicPlaylist.length):mi+dir, !A.paused||true); }
+musicPlaylist.forEach((s,k)=>{ const li=mk("li"), b=mk("button","",s.title+" — "+s.artist); b.onclick=()=>mLoad(k,true); li.appendChild(b); $("#pl").appendChild(li); });
+mLoad(0,false);
+$("#mbtn").onclick=()=>{ const p=$("#mp"); p.hidden=!p.hidden; $("#mbtn").setAttribute("aria-expanded",!p.hidden); };
+$("#mplay").onclick=()=>{ if(!musicPlaylist.length) return; A.paused ? A.play().catch(()=>{ $("#mst").textContent="Couldn't play this file."; }) : A.pause(); };
+$("#mprev").onclick=()=>mNext(-1); $("#mnext").onclick=()=>mNext(1);
+$("#mshuf").onclick=e=>{ shuf=!shuf; e.currentTarget.classList.toggle("on",shuf); };
+$("#mrep").onclick=e=>{ A.loop=!A.loop; e.currentTarget.classList.toggle("on",A.loop); };
+$("#mmute").onclick=()=>{ A.muted=!A.muted; $("#mmute").textContent=A.muted?"🔇":"🔊"; };
+$("#mvol").oninput=e=>{ A.volume=+e.target.value; };
+$("#mseek").oninput=e=>{ if(isFinite(A.duration)) A.currentTime=A.duration*e.target.value/100; };
+A.onplay=()=>{ $("#mplay").textContent="⏸"; $("#mbtn").textContent="🎶"; };
+A.onpause=()=>{ $("#mplay").textContent="▶"; $("#mbtn").textContent="🎵"; };
+A.ontimeupdate=()=>{ $("#mcur").textContent=fmt(A.currentTime); $("#mdur").textContent=fmt(A.duration); $("#mseek").value=A.duration?A.currentTime/A.duration*100:0; };
+A.onended=()=>mNext(1);
+A.onerror=()=>{ $("#mst").textContent="Couldn't load this song — check the audio/ folder and file name."; };
+</script>
+</body>
+</html>
